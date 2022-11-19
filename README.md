@@ -1,5 +1,65 @@
 # Getting Started with Create React App
 
+This solution is the result of completion a test task, according to which a Web application should be created in accordance with the following requirements:
+
+- Tech stack requirements:
+    - UI framework: React or Angular;
+    - Back-end: TBD.
+
+## Empty page
+
+Page is loaded when app is launched and no data entered before.
+
+![Empty page](images/Empty_page.png)
+
+| Control | Action | Behavior |
+|---------|--------|----------|
+| + Add | Click | Open new question form. |
+
+## Add new question
+
+New question form is opened on "Add" button click.
+
+![Add 1st level question](images/Add_1st_level_question.png)
+
+| Control | Action | Behavior |
+|---------|--------|----------|
+| Save | Click | Add static box with new question data to the page. See example below. |
+| Cancel | Click | Remove form to add question. |
+
+## 1st level questions list
+
+![1st level questions](images/1st_level_questions.png)
+
+| Control | Action | Behavior |
+|---------|--------|----------|
+| + Add | Click | Show form to add new question at the end of survey on 1st level. |
+| Cancel | Click | Show n-level question form (see example below). Level of new question should be: parent question level + 1. |
+
+## Add n-level question
+
+Page is opened after click on "+ Add nested" link.
+
+![Add 2nd level question](images/Add_2nd_level_question.png)
+
+| Input | Validation |
+|-------|------------|
+| Options drop-down | User shouldn't be able to select option which already used in another inner question under the same parent question. |
+| Question text / answers | Any text. |
+
+| Control | Action | Behavior |
+|---------|--------|----------|
+| + Add | Click | Show form to add new question at the end of survey on 1st level. Hide already opened form. |
+| + Add nested | Click | Show n-level question form (see example below). Level of new question should be: parent question level + 1. Hide already opened form. Button shouldn't be displayed if branches for all options are created. |
+| Save | Click | Add static box with new question data to the page on proper level below of parent box. |
+| Cancel  | Click | Remove form to add question. |
+
+## n-level questions list
+
+![n-level questions](images/N-level.png)
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) TS template.
 
 ## Available Scripts
