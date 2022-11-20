@@ -2,6 +2,7 @@ import { FunctionComponent } from 'react';
 
 import {
   Box,
+  Button,
   Divider,
   List,
   ListItem,
@@ -9,11 +10,16 @@ import {
   Typography,
 } from '@mui/material';
 
+import CloseIcon from '@mui/icons-material/Close';
+
 import EditQuestionForm from './EditQuestionForm';
 import QuestionsList from './QuestionsList';
 
-import { useAppSelector } from '../../app/hooks';
-import { questionsSelector } from '../../features/questions/questionsSlice';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import {
+  removeQuestion,
+  questionsSelector,
+} from '../../features/questions/questionsSlice';
 
 import { IQuestion, IQuestionOption } from './types';
 
@@ -26,6 +32,7 @@ const Question: FunctionComponent<QuestionComponentProps> = ({
 }) => {
   let showWhenOptionChosen: IQuestionOption | undefined;
 
+  const dispatch = useAppDispatch();
   const questions = useAppSelector(questionsSelector);
 
   if (question.parentQuestionId) {
@@ -70,6 +77,14 @@ const Question: FunctionComponent<QuestionComponentProps> = ({
               </ListItem>
             ))}
           </List>
+          <Box sx={{ textAlign: 'end' }}>
+            <Button
+              color="error"
+              onClick={() => dispatch(removeQuestion(question))}
+            >
+              <CloseIcon fontSize="small" /> Delete
+            </Button>
+          </Box>
         </Box>
       </Paper>
       <Box sx={{

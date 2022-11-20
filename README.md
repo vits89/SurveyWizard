@@ -58,6 +58,14 @@ Page is opened after click on "+ Add nested" link.
 
 ![n-level questions](images/N-level.png)
 
+## Questions removal
+
+![n-level questions list with deletion](images/N-level_with_deletion.png)
+
+| Control | Action | Behavior |
+|---------|--------|----------|
+| x Delete | Click | Remove specified element and all inner elements. |
+
 ---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) TS template.

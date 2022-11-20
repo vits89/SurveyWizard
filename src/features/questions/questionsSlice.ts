@@ -1,4 +1,4 @@
-import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from '../../app/store';
 
@@ -35,10 +35,27 @@ export const questionsSlice = createSlice({
         state.questions.push(question);
       }
     },
+    removeQuestion: (state, action: PayloadAction<IQuestion>) => {
+      const removeQuestion = (question: IQuestion): void => {
+        question.nestedQuestions.forEach((q) => {
+          removeQuestion(q);
+        });
+
+        const index = state.questions.findIndex(q => q.id === question.id);
+
+        if (index >= 0) {
+          state.questions.splice(index, 1);
+        } else {
+          console.error(`Question with ID ${question.id} not found.`);
+        }
+      };
+
+      removeQuestion(action.payload);
+    },
   },
 });
 
-export const { addQuestion } = questionsSlice.actions;
+export const { addQuestion, removeQuestion } = questionsSlice.actions;
 
 export const questionsSelector = (state: RootState) => state.questions.questions;
 
