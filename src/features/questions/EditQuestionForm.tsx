@@ -53,7 +53,7 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
       question.parentQuestionId = parentQuestionId;
       question.showWhenOptionChosen = parentQuestionOptionsFiltered.length > 0
         ? parentQuestionOptionsFiltered[0].id
-        : '';
+        : undefined;
     }
   }
 

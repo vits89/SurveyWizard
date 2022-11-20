@@ -9,8 +9,8 @@ export interface IQuestion {
   id: string;
   text: string;
   options: IQuestionOption[];
-  parentQuestionId: string;
-  showWhenOptionChosen: string;
+  parentQuestionId?: string;
+  showWhenOptionChosen?: string;
   nestedQuestions: IQuestion[];
 }
 
@@ -26,7 +26,7 @@ export class Question implements IQuestion {
     new QuestionOption(),
     new QuestionOption(),
   ];
-  parentQuestionId = '';
-  showWhenOptionChosen = '';
+  parentQuestionId = undefined;
+  showWhenOptionChosen = undefined;
   nestedQuestions = [];
 }
