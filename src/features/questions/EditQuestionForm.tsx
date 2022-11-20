@@ -12,6 +12,8 @@ import {
   MenuItem,
   Stack,
 } from '@mui/material';
+
+import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -140,7 +142,7 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
                   </List>
                   <Box>
                     <Button onClick={() => push(new QuestionOption())}>
-                      + Add
+                      <AddIcon fontSize="small" /> Add
                     </Button>
                   </Box>
                 </>
@@ -166,7 +168,7 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
     </Formik>
   ) : (!parentQuestionId || parentQuestionOptionsFiltered.length > 0) ? (
     <Button onClick={() => showForm(true)}>
-      {`+ Add${!!parentQuestionId ? ' nested' : ''}`}
+      <AddIcon fontSize="small" /> {`Add${!!parentQuestionId ? ' nested' : ''}`}
     </Button>
   ) : null;
 };
