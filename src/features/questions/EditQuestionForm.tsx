@@ -1,6 +1,15 @@
 import { memo, useState, FunctionComponent } from 'react';
-import { Field, FieldArray, Form, Formik, FormikProps } from 'formik';
+import {
+  ErrorMessage,
+  Field,
+  FieldArray,
+  Form,
+  Formik,
+  getIn,
+  FormikProps,
+} from 'formik';
 import { TextField } from 'formik-mui';
+import * as Yup from 'yup';
 
 import {
   Box,
@@ -11,6 +20,7 @@ import {
   ListItem,
   MenuItem,
   Stack,
+  Typography,
 } from '@mui/material';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -19,7 +29,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
   addQuestion,
-  questionsSelector
+  questionsSelector,
 } from '../../features/questions/questionsSlice';
 
 import { IQuestion, IQuestionOption, Question, QuestionOption } from './types';
@@ -28,6 +38,30 @@ type EditQuestionFormComponentProps = {
   questionId?: string;
   parentQuestionId?: string;
 };
+
+const questionOptionValidationSchema = Yup
+  .object()
+  .shape<Record<keyof IQuestionOption, Yup.AnySchema>>({
+    id: Yup.string().trim().required(),
+    text: Yup.string().trim().required(),
+  });
+
+const questionValidationSchema = Yup
+  .object()
+  .shape<Record<keyof IQuestion, Yup.AnySchema>>({
+    id: Yup.string().trim().required(),
+    text: Yup.string().trim().required(),
+    options: Yup.array(questionOptionValidationSchema).min(2),
+    parentQuestionId: Yup.string().optional(),
+    showWhenOptionChosen: Yup
+      .string()
+      .when('parentQuestionId', {
+        is: (value: string) => !value,
+        then: schema => schema.trim().required(),
+        otherwise: schema => schema.optional(),
+      }),
+    nestedQuestions: Yup.array<IQuestion>(),
+  });
 
 const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
   questionId,
@@ -62,17 +96,19 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
   return formShown ? (
     <Formik
       initialValues={question}
+      validationSchema={questionValidationSchema}
       onSubmit={(values) => {
         showForm(false);
         dispatch(addQuestion(values));
       }}
     >
-      {({ values, isSubmitting }: FormikProps<IQuestion>) => (
+      {({ values, errors, touched, isSubmitting }: FormikProps<IQuestion>) => (
         <Form>
           <Box sx={{
             border: 1,
             borderColor: 'grey.300',
             marginBottom: 1,
+            maxWidth: { sm: 'sm' },
             padding: 1,
           }}>
             <Field type="hidden" name="parentQuestionId" />
@@ -84,6 +120,12 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
                   label="Show when:"
                   margin="dense"
                   size="small"
+                  error={
+                    touched.showWhenOptionChosen && errors.showWhenOptionChosen
+                  }
+                  helperText={
+                    touched.showWhenOptionChosen && errors.showWhenOptionChosen
+                  }
                   select
                   fullWidth
                 >
@@ -94,52 +136,64 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
                 <Divider />
               </>
             )}
-            <Box sx={{
-              marginBottom: 0.5,
-              marginTop: 1,
-              width: 1,
-            }}>
-              <Field
-                as="textarea"
-                name="text"
-                placeholder="Enter question here."
-                rows="4"
-                style={{ width: '100%' }}
-              />
-            </Box>
+            <Field
+              component={TextField}
+              name="text"
+              margin="dense"
+              placeholder="Enter question here."
+              rows={4}
+              error={touched.text && errors.text}
+              helperText={touched.text && errors.text}
+              multiline
+              fullWidth
+            />
             <Divider />
             <FieldArray name="options">
               {({ push, remove }) => (
                 <>
                   <List component="ol" sx={{ listStyleType: 'decimal' }}>
-                    {values.options.map((o, i) => (
-                      <ListItem sx={{
-                          display: 'list-item',
-                          marginLeft: 2.5,
-                          padding: 0,
-                          width: 'unset',
-                        }}
-                        key={o.id}
-                      >
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          sx={{ alignItems: 'center' }}
+                    {values.options.map((o, i) => {
+                      const fieldName = `options[${i}].text`,
+                        fieldTouched: boolean = getIn(touched, fieldName, false),
+                        errorText: string = getIn(errors, fieldName, '');
+
+                      return (
+                        <ListItem sx={{
+                            display: 'list-item',
+                            marginLeft: 2.5,
+                            padding: 0,
+                            width: 'unset',
+                          }}
+                          key={o.id}
                         >
-                          <Field
-                            component={TextField}
-                            name={`options[${i}].text`}
-                            margin="dense"
-                            size="small"
-                            placeholder="Enter option details here."
-                          />
-                          <IconButton onClick={() => remove(i)}>
-                            <CloseIcon />
-                          </IconButton>
-                        </Stack>
-                      </ListItem>
-                    ))}
+                          <Stack
+                            direction="row"
+                            spacing={1}
+                            sx={{ alignItems: 'center' }}
+                          >
+                            <Field
+                              component={TextField}
+                              name={fieldName}
+                              margin="dense"
+                              size="small"
+                              placeholder="Enter option details here."
+                              error={fieldTouched && errorText}
+                              helperText={fieldTouched && errorText}
+                              fullWidth
+                            />
+                            <IconButton onClick={() => remove(i)}>
+                              <CloseIcon />
+                            </IconButton>
+                          </Stack>
+                        </ListItem>
+                      );
+                    })}
                   </List>
+                  {typeof errors.options === 'string' && errors.options && (
+                    <Typography component="span" sx={{ color: 'error.main' }}>
+                      <ErrorMessage name="options" />
+                    </Typography>
+                  )}
                   <Box>
                     <Button onClick={() => push(new QuestionOption())}>
                       <AddIcon fontSize="small" /> Add
