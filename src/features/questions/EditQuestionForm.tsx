@@ -1,4 +1,4 @@
-import { memo, useState, FunctionComponent } from 'react';
+import { useState, FunctionComponent } from 'react';
 import {
   ErrorMessage,
   Field,
@@ -35,8 +35,8 @@ import {
 import { IQuestion, IQuestionOption, Question, QuestionOption } from './types';
 
 type EditQuestionFormComponentProps = {
-  questionId?: string;
-  parentQuestionId?: string;
+  question?: IQuestion;
+  parentQuestion?: IQuestion;
 };
 
 const questionOptionValidationSchema = Yup
@@ -64,8 +64,8 @@ const questionValidationSchema = Yup
   });
 
 const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
-  questionId,
-  parentQuestionId,
+  question,
+  parentQuestion,
 }) => {
   let parentQuestionOptionsFiltered: IQuestionOption[] = [];
 
@@ -74,30 +74,25 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
   const dispatch = useAppDispatch();
   const questions = useAppSelector(questionsSelector);
 
-  const question =
-    (questionId && questions.find(q => q.id === questionId)) || new Question();
+  const questionData = question || new Question();
 
-  if (parentQuestionId) {
-    const parentQuestion = questions.find(q => q.id === parentQuestionId);
+  if (parentQuestion) {
+    const chosenQuestionOptionIds =
+      questions.map(q => q.parentQuestionOptionId);
 
-    if (parentQuestion) {
-      const chosenQuestionOptionIds =
-        questions.map(q => q.parentQuestionOptionId);
+    parentQuestionOptionsFiltered = parentQuestion.options
+      .filter(o => !chosenQuestionOptionIds.includes(o.id));
 
-      parentQuestionOptionsFiltered = parentQuestion.options
-        .filter(o => !chosenQuestionOptionIds.includes(o.id));
-
-      question.parentQuestionId = parentQuestion.id;
-      question.parentQuestionOptionId =
-        parentQuestionOptionsFiltered.length > 0
-          ? parentQuestionOptionsFiltered[0].id
-          : undefined;
-    }
+    questionData.parentQuestionId = parentQuestion.id;
+    questionData.parentQuestionOptionId =
+      parentQuestionOptionsFiltered.length > 0
+        ? parentQuestionOptionsFiltered[0].id
+        : undefined;
   }
 
   return formShown ? (
     <Formik
-      initialValues={question}
+      initialValues={questionData}
       validationSchema={questionValidationSchema}
       onSubmit={(values) => {
         showForm(false);
@@ -229,11 +224,11 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
         </Box>
       )}
     </Formik>
-  ) : (!parentQuestionId || parentQuestionOptionsFiltered.length > 0) ? (
+  ) : (!parentQuestion || parentQuestionOptionsFiltered.length > 0) ? (
     <Button onClick={() => showForm(true)}>
-      <AddIcon fontSize="small" /> {`Add${!!parentQuestionId ? ' nested' : ''}`}
+      <AddIcon fontSize="small" /> {`Add${!!parentQuestion ? ' nested' : ''}`}
     </Button>
   ) : null;
 };
 
-export default memo(EditQuestionForm);
+export default EditQuestionForm;

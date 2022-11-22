@@ -91,7 +91,7 @@ const Question: FunctionComponent<QuestionComponentProps> = ({
         marginLeft: 4,
         marginTop: 1,
       }}>
-        <EditQuestionForm parentQuestionId={question.id} />
+        <EditQuestionForm parentQuestion={question} />
         {question.nestedQuestions.length > 0 && (
           <QuestionsList parentQuestionId={question.id} />
         )}
