@@ -103,121 +103,128 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
       }}
     >
       {({ values, errors, touched, isSubmitting }: FormikProps<IQuestion>) => (
-        <Form>
-          <Box sx={{
-            border: 1,
-            borderColor: 'grey.300',
-            marginBottom: 1,
-            maxWidth: { sm: 'sm' },
-            padding: 1,
-          }}>
-            <Field type="hidden" name="parentQuestionId" />
-            {parentQuestionOptionsFiltered.length > 0 && (
-              <>
-                <Field
-                  component={TextField}
-                  name="showWhenOptionChosen"
-                  label="Show when:"
-                  margin="dense"
-                  size="small"
-                  error={
-                    touched.showWhenOptionChosen && errors.showWhenOptionChosen
-                  }
-                  helperText={
-                    touched.showWhenOptionChosen && errors.showWhenOptionChosen
-                  }
-                  select
-                  fullWidth
-                >
-                  {parentQuestionOptionsFiltered.map(o => (
-                    <MenuItem value={o.id} key={o.id}>{o.text}</MenuItem>
-                  ))}
-                </Field>
-                <Divider />
-              </>
-            )}
-            <Field
-              component={TextField}
-              name="text"
-              margin="dense"
-              placeholder="Enter question here."
-              rows={4}
-              error={touched.text && errors.text}
-              helperText={touched.text && errors.text}
-              multiline
-              fullWidth
-            />
-            <Divider />
-            <FieldArray name="options">
-              {({ push, remove }) => (
+        <Box sx={{ maxWidth: { sm: 'sm' } }}>
+          <Form>
+            <Box sx={{
+              border: 1,
+              borderColor: 'grey.300',
+              marginBottom: 1,
+              padding: 1,
+            }}>
+              <Field type="hidden" name="parentQuestionId" />
+              {parentQuestionOptionsFiltered.length > 0 && (
                 <>
-                  <List component="ol" sx={{ listStyleType: 'decimal' }}>
-                    {values.options.map((o, i) => {
-                      const fieldName = `options[${i}].text`,
-                        fieldTouched: boolean = getIn(touched, fieldName, false),
-                        errorText: string = getIn(errors, fieldName, '');
-
-                      return (
-                        <ListItem sx={{
-                            display: 'list-item',
-                            marginLeft: 2.5,
-                            padding: 0,
-                            width: 'unset',
-                          }}
-                          key={o.id}
-                        >
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            sx={{ alignItems: 'center' }}
-                          >
-                            <Field
-                              component={TextField}
-                              name={fieldName}
-                              margin="dense"
-                              size="small"
-                              placeholder="Enter option details here."
-                              error={fieldTouched && errorText}
-                              helperText={fieldTouched && errorText}
-                              fullWidth
-                            />
-                            <IconButton onClick={() => remove(i)}>
-                              <CloseIcon />
-                            </IconButton>
-                          </Stack>
-                        </ListItem>
-                      );
-                    })}
-                  </List>
-                  {typeof errors.options === 'string' && errors.options && (
-                    <Typography component="span" sx={{ color: 'error.main' }}>
-                      <ErrorMessage name="options" />
-                    </Typography>
-                  )}
-                  <Box>
-                    <Button onClick={() => push(new QuestionOption())}>
-                      <AddIcon fontSize="small" /> Add
-                    </Button>
-                  </Box>
+                  <Field
+                    component={TextField}
+                    name="showWhenOptionChosen"
+                    label="Show when:"
+                    margin="dense"
+                    size="small"
+                    error={
+                      touched.showWhenOptionChosen
+                        && errors.showWhenOptionChosen
+                    }
+                    helperText={
+                      touched.showWhenOptionChosen
+                        && errors.showWhenOptionChosen
+                    }
+                    select
+                    fullWidth
+                  >
+                    {parentQuestionOptionsFiltered.map(o => (
+                      <MenuItem value={o.id} key={o.id}>{o.text}</MenuItem>
+                    ))}
+                  </Field>
+                  <Divider />
                 </>
               )}
-            </FieldArray>
-          </Box>
-          <Stack direction="row" spacing={1}>
-            <Button variant="outlined" onClick={() => showForm(false)}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              color="error"
-              variant="contained"
-              disabled={isSubmitting}
-              disableElevation
-            >
-              Save
-            </Button>
-          </Stack>
-        </Form>
+              <Field
+                component={TextField}
+                name="text"
+                margin="dense"
+                placeholder="Enter question here."
+                rows={4}
+                error={touched.text && errors.text}
+                helperText={touched.text && errors.text}
+                multiline
+                fullWidth
+              />
+              <Divider />
+              <FieldArray name="options">
+                {({ push, remove }) => (
+                  <>
+                    <List component="ol" sx={{ listStyleType: 'decimal' }}>
+                      {values.options.map((o, i) => {
+                        const fieldName = `options[${i}].text`,
+                          fieldTouched: boolean =
+                            getIn(touched, fieldName, false),
+                          errorText: string = getIn(errors, fieldName, '');
+
+                        return (
+                          <ListItem sx={{
+                              display: 'list-item',
+                              marginLeft: 2.5,
+                              padding: 0,
+                              width: 'unset',
+                            }}
+                            key={o.id}
+                          >
+                            <Stack
+                              direction="row"
+                              spacing={1}
+                              sx={{ alignItems: 'center' }}
+                            >
+                              <Field
+                                component={TextField}
+                                name={fieldName}
+                                margin="dense"
+                                size="small"
+                                placeholder="Enter option details here."
+                                error={fieldTouched && errorText}
+                                helperText={fieldTouched && errorText}
+                                fullWidth
+                              />
+                              <IconButton onClick={() => remove(i)}>
+                                <CloseIcon />
+                              </IconButton>
+                            </Stack>
+                          </ListItem>
+                        );
+                      })}
+                    </List>
+                    {typeof errors.options === 'string' && errors.options && (
+                      <Typography
+                        component="span"
+                        sx={{ color: 'error.main' }}
+                      >
+                        <ErrorMessage name="options" />
+                      </Typography>
+                    )}
+                    <Box>
+                      <Button onClick={() => push(new QuestionOption())}>
+                        <AddIcon fontSize="small" /> Add
+                      </Button>
+                    </Box>
+                  </>
+                )}
+              </FieldArray>
+            </Box>
+            <Stack direction="row" justifyContent="flex-end" spacing={1}>
+              <Button variant="outlined" onClick={() => showForm(false)}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                color="error"
+                variant="contained"
+                disabled={isSubmitting}
+                disableElevation
+              >
+                Save
+              </Button>
+            </Stack>
+          </Form>
+        </Box>
       )}
     </Formik>
   ) : (!parentQuestionId || parentQuestionOptionsFiltered.length > 0) ? (
