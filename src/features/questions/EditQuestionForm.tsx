@@ -53,7 +53,7 @@ const questionValidationSchema = Yup
     text: Yup.string().trim().required(),
     options: Yup.array(questionOptionValidationSchema).min(2),
     parentQuestionId: Yup.string().optional(),
-    showWhenOptionChosen: Yup
+    parentQuestionOptionId: Yup
       .string()
       .when('parentQuestionId', {
         is: (value: string) => !value,
@@ -81,15 +81,17 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
     const parentQuestion = questions.find(q => q.id === parentQuestionId);
 
     if (parentQuestion) {
-      const questionOptionsChosen = questions.map(q => q.showWhenOptionChosen);
+      const chosenQuestionOptionIds =
+        questions.map(q => q.parentQuestionOptionId);
 
       parentQuestionOptionsFiltered = parentQuestion.options
-        .filter(o => !questionOptionsChosen.includes(o.id));
+        .filter(o => !chosenQuestionOptionIds.includes(o.id));
 
-      question.parentQuestionId = parentQuestionId;
-      question.showWhenOptionChosen = parentQuestionOptionsFiltered.length > 0
-        ? parentQuestionOptionsFiltered[0].id
-        : undefined;
+      question.parentQuestionId = parentQuestion.id;
+      question.parentQuestionOptionId =
+        parentQuestionOptionsFiltered.length > 0
+          ? parentQuestionOptionsFiltered[0].id
+          : undefined;
     }
   }
 
@@ -116,17 +118,17 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
                 <>
                   <Field
                     component={TextField}
-                    name="showWhenOptionChosen"
+                    name="parentQuestionOptionId"
                     label="Show when:"
                     margin="dense"
                     size="small"
                     error={
-                      touched.showWhenOptionChosen
-                        && errors.showWhenOptionChosen
+                      touched.parentQuestionOptionId
+                        && errors.parentQuestionOptionId
                     }
                     helperText={
-                      touched.showWhenOptionChosen
-                        && errors.showWhenOptionChosen
+                      touched.parentQuestionOptionId
+                        && errors.parentQuestionOptionId
                     }
                     select
                     fullWidth

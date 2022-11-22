@@ -30,7 +30,7 @@ type QuestionComponentProps = {
 const Question: FunctionComponent<QuestionComponentProps> = ({
   question,
 }) => {
-  let showWhenOptionChosen: IQuestionOption | undefined;
+  let parentQuestionOption: IQuestionOption | undefined;
 
   const dispatch = useAppDispatch();
   const questions = useAppSelector(questionsSelector);
@@ -40,15 +40,15 @@ const Question: FunctionComponent<QuestionComponentProps> = ({
       questions.find(q => q.id === question.parentQuestionId);
 
     if (parentQuestion) {
-      showWhenOptionChosen = parentQuestion.options
-        .find(o => o.id === question.showWhenOptionChosen);
+      parentQuestionOption = parentQuestion.options
+        .find(o => o.id === question.parentQuestionOptionId);
     }
   }
 
   return (
     <Box>
       <Paper variant="outlined" square>
-        {showWhenOptionChosen && (
+        {parentQuestionOption && (
           <Box sx={{
             backgroundColor: 'info.light',
             borderBottom: 1,
@@ -56,7 +56,7 @@ const Question: FunctionComponent<QuestionComponentProps> = ({
             color: 'info.contrastText',
             padding: 1,
           }}>
-            <Typography>{showWhenOptionChosen.text}</Typography>
+            <Typography>{parentQuestionOption.text}</Typography>
           </Box>
         )}
         <Box sx={{ padding: 1 }}>
