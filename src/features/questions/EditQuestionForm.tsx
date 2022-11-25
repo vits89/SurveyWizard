@@ -56,7 +56,7 @@ const questionValidationSchema = Yup
     parentQuestionOptionId: Yup
       .string()
       .when('parentQuestionId', {
-        is: (value: string) => !value,
+        is: (value?: string) => !!value,
         then: schema => schema.trim().required(),
         otherwise: schema => schema.optional(),
       }),
@@ -118,8 +118,8 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
                     margin="dense"
                     size="small"
                     error={
-                      touched.parentQuestionOptionId
-                        && errors.parentQuestionOptionId
+                      !!(touched.parentQuestionOptionId
+                        && errors.parentQuestionOptionId)
                     }
                     helperText={
                       touched.parentQuestionOptionId
@@ -141,7 +141,7 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
                 margin="dense"
                 placeholder="Enter question here."
                 rows={4}
-                error={touched.text && errors.text}
+                error={!!(touched.text && errors.text)}
                 helperText={touched.text && errors.text}
                 multiline
                 fullWidth
@@ -177,7 +177,7 @@ const EditQuestionForm: FunctionComponent<EditQuestionFormComponentProps> = ({
                                 margin="dense"
                                 size="small"
                                 placeholder="Enter option details here."
-                                error={fieldTouched && errorText}
+                                error={!!(fieldTouched && errorText)}
                                 helperText={fieldTouched && errorText}
                                 fullWidth
                               />
